@@ -1,0 +1,16 @@
+{
+    "name": "AeLa.Utilities.SceneTransition",
+    "rootNamespace": "AeLa.Utilities.SceneTransition",
+    "references": [
+        "GUID:330cc2e1a8807401982462d4bc2650fb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
