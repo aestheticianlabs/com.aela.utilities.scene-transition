@@ -1,0 +1,10 @@
+{
+	"name": "com.aela.utilities.scene-transition",
+	"version": "1.0.0",
+	"displayName": "AeLa Scene Transition Utility",
+	"description": "Helps manage scene transitions",
+	"unity": "2020.3",
+	"dependencies": {
+		"com.aela.utilities": "1.0.0"
+	}
+}
