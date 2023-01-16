@@ -4,6 +4,7 @@
 	"displayName": "AeLa Scene Transition Utility",
 	"description": "Helps manage scene transitions",
 	"unity": "2020.3",
+	"documentationUrl": "https://github.com/aestheticianlabs/com.aela.utilities.scene-transition/",
 	"dependencies": {
 		"com.aela.utilities": "1.0.0"
 	}
