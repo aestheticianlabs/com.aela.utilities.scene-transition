@@ -47,7 +47,7 @@ namespace AeLa.Utilities.SceneTransition
 		{
 			var op = SceneTransitionManager.Instance.BlockingOperations.StartOperation();
 			CoroutineUtils.Global.DoAfter(
-				fader.FadeIn(), () =>
+				fader.FadeInCoroutine(), () =>
 				{
 					loadStartTime = Time.unscaledTime;
 					op.Progress = 1f;
@@ -90,7 +90,7 @@ namespace AeLa.Utilities.SceneTransition
 			loadingVideo.Stop();
 			loadingVideo.gameObject.SetActive(false);
 
-			yield return fader.FadeOut();
+			yield return fader.FadeOutCoroutine();
 		}
 
 		private void OnSceneTransitionComplete(string currentPath)
