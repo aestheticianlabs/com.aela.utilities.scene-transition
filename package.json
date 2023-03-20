@@ -1,12 +1,12 @@
 {
 	"name": "com.aela.utilities.scene-transition",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"displayName": "AeLa Scene Transition Utility",
 	"description": "Helps manage scene transitions",
 	"unity": "2020.3",
 	"documentationUrl": "https://github.com/aestheticianlabs/com.aela.utilities.scene-transition/",
 	"dependencies": {
-		"com.aela.utilities": "1.0.0"
+		"com.aela.utilities": "1.2.0"
 	},
 	"author": {
 		"name": "Aesthetician Labs",
