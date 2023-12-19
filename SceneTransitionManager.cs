@@ -225,7 +225,7 @@ namespace AeLa.Utilities.SceneTransition
 
 				if (reportProgress)
 				{
-					OnLoadProgress.Invoke(progress);
+					OnLoadProgress?.Invoke(progress);
 				}
 
 				yield return null;
