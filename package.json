@@ -6,7 +6,7 @@
 	"unity": "2020.3",
 	"documentationUrl": "https://github.com/aestheticianlabs/com.aela.utilities.scene-transition/",
 	"dependencies": {
-		"com.aela.utilities": "1.2.0"
+		"com.aela.utilities": "1.2.0-unreleased"
 	},
 	"author": {
 		"name": "Aesthetician Labs",
