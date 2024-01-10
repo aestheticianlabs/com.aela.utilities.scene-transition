@@ -11,6 +11,7 @@ namespace AeLa.Utilities.SceneTransition
 	{
 		public static LoadingScreen Instance { get; private set; }
 
+
 		[SerializeField] private VideoPlayer loadingVideo;
 
 		/// <summary>
@@ -59,7 +60,7 @@ namespace AeLa.Utilities.SceneTransition
 
 		private void OnLoadProgress(float progress)
 		{
-			Debug.Log($"Load progress {progress}");
+			DebugFiltered.Log(SceneTransitionManager.Instance.LogLevel, $"Load progress {progress}");
 		}
 
 		private void OnAfterUnload(string obj)

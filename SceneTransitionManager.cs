@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using AeLa.Utilities.Debugging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Singleton = AeLa.Utilities.Singleton<AeLa.Utilities.SceneTransition.SceneTransitionManager>;
@@ -67,6 +68,8 @@ namespace AeLa.Utilities.SceneTransition
 		/// </summary>
 		/// <remarks>Blocking operations added during this callback will be ignored</remarks>
 		public static Action<string> OnSceneTransitionComplete;
+
+		public LogLevel LogLevel = LogLevel.Warning;
 
 		public bool ControlTimeScale = true;
 
@@ -234,7 +237,7 @@ namespace AeLa.Utilities.SceneTransition
 
 		private void Log(string message, LogType type = LogType.Log)
 		{
-			Debug.unityLogger.Log(type, $"[STM] {message} (Active: {SceneManager.GetActiveScene().name})");
+			DebugFiltered.Log(type, LogLevel, $"[STM] {message} (Active: {SceneManager.GetActiveScene().name})");
 		}
 	}
 }
