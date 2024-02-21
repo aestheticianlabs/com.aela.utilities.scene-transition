@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace AeLa.Utilities.SceneTransition
@@ -30,10 +31,15 @@ namespace AeLa.Utilities.SceneTransition
 
 		public void Clear() => operations.Clear();
 
-		public class Operation
+		public class Operation : IDisposable
 		{
 			public float Progress;
 			public bool IsComplete => Progress >= 1f;
+
+			public void Dispose()
+			{
+				Progress = 1f;
+			}
 		}
 	}
 }

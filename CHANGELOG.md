@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Filter log messages by severity 
 
+## Changed
+
+- Make `ProgressiveOperationManager.Operation` disposable for ease of use
+
 ## [1.0.2] - 2023-12-19
 
 ## Fixed
