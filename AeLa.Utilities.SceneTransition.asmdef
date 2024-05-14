@@ -2,7 +2,9 @@
     "name": "AeLa.Utilities.SceneTransition",
     "rootNamespace": "AeLa.Utilities.SceneTransition",
     "references": [
-        "GUID:330cc2e1a8807401982462d4bc2650fb"
+        "AeLa.Utilities",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

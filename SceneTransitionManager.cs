@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Singleton = AeLa.Utilities.Singleton<AeLa.Utilities.SceneTransition.SceneTransitionManager>;
 
+#if AELA_USE_ADDRESSABLES
+using UnityEngine.AddressableAssets;
+#endif
+
 namespace AeLa.Utilities.SceneTransition
 {
 	[DefaultExecutionOrder(-1000)]
@@ -147,6 +151,14 @@ namespace AeLa.Utilities.SceneTransition
 
 			Log("Loading next scene...");
 			// load next scene
+#if AELA_USE_ADDRESSABLES
+			var sceneOp = Addressables.LoadSceneAsync(nextScene, LoadSceneMode.Additive, false);
+			while (!sceneOp.IsDone)
+			{
+				OnLoadProgress?.Invoke(sceneOp.PercentComplete);
+				yield return null;
+			}
+#else
 			var op = SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Additive);
 			op.allowSceneActivation = false;
 			while (op.progress < 0.9f) // scene load progress stops at 0.9 when allowSceneActivation = false
@@ -154,6 +166,7 @@ namespace AeLa.Utilities.SceneTransition
 				OnLoadProgress?.Invoke(op.progress);
 				yield return null;
 			}
+#endif
 
 			Log("OnBeforeActivate");
 			OnBeforeActivate?.Invoke(nextScene);
@@ -161,7 +174,11 @@ namespace AeLa.Utilities.SceneTransition
 
 			Log("Activating new scene...");
 			// activate and integrate new scene
+#if AELA_USE_ADDRESSABLES
+			var op = sceneOp.Result.ActivateAsync();
+#else
 			op.allowSceneActivation = true;
+#endif
 			while (!op.isDone) yield return null;
 			SceneManager.SetActiveScene(SceneManager.GetSceneByPath(nextScene));
 
@@ -170,6 +187,7 @@ namespace AeLa.Utilities.SceneTransition
 			yield return WaitForBlockingOperations();
 
 			Log("Unloading previous...");
+
 			// unload previous scene
 			yield return SceneManager.UnloadSceneAsync(currentScene);
 
