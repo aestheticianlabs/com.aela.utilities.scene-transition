@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using AeLa.Utilities.Debugging;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using Singleton = AeLa.Utilities.Singleton<AeLa.Utilities.SceneTransition.SceneTransitionManager>;
 
@@ -79,13 +80,14 @@ namespace AeLa.Utilities.SceneTransition
 
 		private string currentScene, nextScene;
 		private bool isLoading;
-		
+
 		public Scene ActiveScene { get; private set; }
 
 		/// <summary>
 		/// True if we are currently changing scenes
 		/// </summary>
 		public bool IsLoading => isLoading;
+
 		public bool IsSceneReady { get; private set; }
 
 		/// <summary>
@@ -134,6 +136,10 @@ namespace AeLa.Utilities.SceneTransition
 			StartCoroutine(ChangeSceneRoutine());
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <returns></returns>
 		private IEnumerator ChangeSceneRoutine()
 		{
 			isLoading = true;
@@ -151,22 +157,44 @@ namespace AeLa.Utilities.SceneTransition
 
 			Log("Loading next scene...");
 			// load next scene
+			AsyncOperation op = null;
 #if AELA_USE_ADDRESSABLES
 			var sceneOp = Addressables.LoadSceneAsync(nextScene, LoadSceneMode.Additive, false);
-			while (!sceneOp.IsDone)
+
+			while (sceneOp is { Status: AsyncOperationStatus.None, IsDone: false })
 			{
 				OnLoadProgress?.Invoke(sceneOp.PercentComplete);
 				yield return null;
 			}
-#else
-			var op = SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Additive);
-			op.allowSceneActivation = false;
-			while (op.progress < 0.9f) // scene load progress stops at 0.9 when allowSceneActivation = false
+
+			// throw scene load exception if we can't fall back to SceneManager
+			if (!Application.isEditor && sceneOp.OperationException != null)
 			{
-				OnLoadProgress?.Invoke(op.progress);
-				yield return null;
+				throw sceneOp.OperationException;
 			}
+
+			// otherwise, log a warning in the editor
+			if (sceneOp.Status == AsyncOperationStatus.Failed)
+			{
+				Log(
+					$"Failed to load scene {nextScene} from Addressables. Falling back to SceneManager (editor).",
+					LogType.Warning
+				);
+			}
+
+			// failed to load from addressables, fall back to SceneManager load (in editor)
+			// this lets us load scenes in the editor that we don't necessarily want in the build
+			if (sceneOp.Status == AsyncOperationStatus.Failed)
 #endif
+			{
+				op = SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Additive);
+				op.allowSceneActivation = false;
+				while (op.progress < 0.9f) // scene load progress stops at 0.9 when allowSceneActivation = false
+				{
+					OnLoadProgress?.Invoke(op.progress);
+					yield return null;
+				}
+			}
 
 			Log("OnBeforeActivate");
 			OnBeforeActivate?.Invoke(nextScene);
@@ -175,10 +203,16 @@ namespace AeLa.Utilities.SceneTransition
 			Log("Activating new scene...");
 			// activate and integrate new scene
 #if AELA_USE_ADDRESSABLES
-			var op = sceneOp.Result.ActivateAsync();
-#else
-			op.allowSceneActivation = true;
+			if (sceneOp.Status == AsyncOperationStatus.Succeeded)
+			{
+				op = sceneOp.Result.ActivateAsync();
+			}
+			else
 #endif
+			{
+				op.allowSceneActivation = true;
+			}
+
 			while (!op.isDone) yield return null;
 			SceneManager.SetActiveScene(SceneManager.GetSceneByPath(nextScene));
 
@@ -204,7 +238,7 @@ namespace AeLa.Utilities.SceneTransition
 			if (ControlTimeScale) Time.timeScale = 0;
 
 			ActiveScene = SceneManager.GetActiveScene();
-			
+
 			Log("OnBeforeSceneReady");
 			OnBeforeSceneReady?.Invoke(nextScene);
 			yield return WaitForBlockingOperations();
