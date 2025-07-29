@@ -1,7 +1,9 @@
-using System.Collections;
-using AeLa.Utilities.UI;
+using System.Collections; using AeLa.Utilities.UI;
 using UnityEngine;
+
+#if UNITY_VIDEO
 using UnityEngine.Video;
+#endif
 
 namespace AeLa.Utilities.SceneTransition
 {
@@ -11,8 +13,9 @@ namespace AeLa.Utilities.SceneTransition
 	{
 		public static LoadingScreen Instance { get; private set; }
 
-
+#if UNITY_VIDEO
 		[SerializeField] private VideoPlayer loadingVideo;
+#endif
 
 		/// <summary>
 		/// Minimum time to spend on the loading screen
@@ -36,7 +39,9 @@ namespace AeLa.Utilities.SceneTransition
 			DontDestroyOnLoad(this);
 
 			fader = GetComponent<UIFader>();
+#if UNITY_VIDEO
 			loadingVideo.gameObject.SetActive(false);
+#endif
 
 			SceneTransitionManager.OnBeforeTransition += OnBeforeTransition;
 			SceneTransitionManager.OnLoadProgress += OnLoadProgress;
@@ -52,8 +57,10 @@ namespace AeLa.Utilities.SceneTransition
 				{
 					loadStartTime = Time.unscaledTime;
 					op.Progress = 1f;
+#if UNITY_VIDEO
 					loadingVideo.gameObject.SetActive(true);
 					loadingVideo.Play();
+#endif
 				}
 			);
 		}
@@ -76,6 +83,7 @@ namespace AeLa.Utilities.SceneTransition
 				yield return null;
 			}
 
+#if UNITY_VIDEO
 			// let loading video finish
 			var loopPointReached = false;
 			void WaitForLoopPoint(VideoPlayer source) => loopPointReached = true;
@@ -90,6 +98,7 @@ namespace AeLa.Utilities.SceneTransition
 			// stop and hide video
 			loadingVideo.Stop();
 			loadingVideo.gameObject.SetActive(false);
+#endif
 
 			yield return fader.FadeOutCoroutine();
 		}

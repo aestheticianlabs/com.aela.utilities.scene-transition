@@ -13,6 +13,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.video",
+            "expression": "",
+            "define": "UNITY_VIDEO"
+        }
+    ],
     "noEngineReferences": false
 }
