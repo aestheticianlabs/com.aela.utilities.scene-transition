@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using AeLa.Utilities.Debugging;
 using UnityEngine;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using Singleton = AeLa.Utilities.Singleton<AeLa.Utilities.SceneTransition.SceneTransitionManager>;
 
 #if AELA_USE_ADDRESSABLES
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 #endif
 
 namespace AeLa.Utilities.SceneTransition
