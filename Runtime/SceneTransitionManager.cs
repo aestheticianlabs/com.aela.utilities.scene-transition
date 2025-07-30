@@ -105,6 +105,20 @@ namespace AeLa.Utilities.SceneTransition
 			Singleton.SetInstance(this);
 		}
 
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		private void ResetStatics()
+		{
+			OnBeforeTransition = null;
+			OnBeforeUnload = null;
+			OnAfterUnload = null;
+			OnBeforeLoad = null;
+			OnLoadProgress = null;
+			OnBeforeActivate = null;
+			OnBeforeSceneReady = null;
+			OnSceneReady = null;
+			OnSceneTransitionComplete = null;
+		}
+
 		private void Start()
 		{
 			DontDestroyOnLoad(this);
@@ -214,6 +228,7 @@ namespace AeLa.Utilities.SceneTransition
 			}
 
 			while (!op.isDone) yield return null;
+
 			SceneManager.SetActiveScene(SceneManager.GetSceneByPath(nextScene));
 
 			Log("OnBeforeUnload");
