@@ -81,7 +81,7 @@ namespace AeLa.Utilities.SceneTransition
 		private string currentScene, nextScene;
 		private bool isLoading;
 
-		public Scene ActiveScene { get; private set; }
+		public string ActiveScene { get; private set; }
 
 		/// <summary>
 		/// True if we are currently changing scenes
@@ -237,8 +237,18 @@ namespace AeLa.Utilities.SceneTransition
 
 			Log("Unloading previous...");
 
-			// unload previous scene
-			yield return SceneManager.UnloadSceneAsync(currentScene);
+			if (currentScene == ActiveScene)
+			{
+				// unload previous scene
+				yield return SceneManager.UnloadSceneAsync(currentScene);
+			}
+			else
+			{
+				Log(
+					$"Expected to unload active scene {ActiveScene} but found {currentScene}. Not unloading scene.",
+					LogType.Warning
+				);
+			}
 
 			Log("OnAfterUnload");
 			OnAfterUnload?.Invoke(currentScene);
@@ -252,7 +262,7 @@ namespace AeLa.Utilities.SceneTransition
 			// set again here in case this was started outside of the main load routine (i.e. Start)
 			if (ControlTimeScale) Time.timeScale = 0;
 
-			ActiveScene = SceneManager.GetActiveScene();
+			ActiveScene = SceneManager.GetActiveScene().path;
 
 			Log("OnBeforeSceneReady");
 			OnBeforeSceneReady?.Invoke(nextScene);
