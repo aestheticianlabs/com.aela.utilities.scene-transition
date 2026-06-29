@@ -236,25 +236,36 @@ namespace AeLa.Utilities.SceneTransition
 			yield return WaitForBlockingOperations();
 
 			Log("Unloading previous...");
-
-			if (currentScene == ActiveScene)
-			{
-				// unload previous scene
-				yield return SceneManager.UnloadSceneAsync(currentScene);
-			}
-			else
-			{
-				Log(
-					$"Expected to unload active scene {ActiveScene} but found {currentScene}. Not unloading scene.",
-					LogType.Warning
-				);
-			}
+			yield return TryUnloadPrevious();
 
 			Log("OnAfterUnload");
 			OnAfterUnload?.Invoke(currentScene);
 			yield return WaitForBlockingOperations();
 
 			yield return ReadySceneRoutine();
+		}
+
+		private IEnumerator TryUnloadPrevious()
+		{
+			if (currentScene != ActiveScene)
+			{
+				Log(
+					$"Expected to unload active scene {ActiveScene} but found {currentScene}. Not unloading scene.",
+					LogType.Warning
+				);
+				yield break;
+			}
+
+			var scene = SceneManager.GetSceneByPath(currentScene);
+
+			// attempts to catch ArgumentException from UnloadSceneAsync (can't use try/catch with yield return)
+			if (!scene.IsValid())
+			{
+				Log($"{currentScene} is not valid.", LogType.Error);
+				yield break;
+			}
+
+			yield return SceneManager.UnloadSceneAsync(currentScene);
 		}
 
 		private IEnumerator ReadySceneRoutine()
